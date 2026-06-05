@@ -544,4 +544,86 @@ MANGO_TEST_PLATFORM_AUTH_HEADER=${authHeader.value}`
     font-size: 12px;
     line-height: 20px;
   }
+  .mango-mcp-head {
+    padding: 2px 0 4px;
+  }
+
+  .mango-mcp-pulse {
+    animation: mango-mcp-pulse-ring 2.4s ease-out infinite;
+  }
+
+  .mango-mcp-endpoint-box,
+  .mango-mcp-api-key-box,
+  .mango-mcp-status-item,
+  .mango-mcp-capability-item,
+  .mango-mcp-prompt-panel {
+    transition: border-color 0.22s ease, background-color 0.22s ease, transform 0.22s ease;
+  }
+
+  .mango-mcp-endpoint-box,
+  .mango-mcp-api-key-box {
+    background: linear-gradient(180deg, var(--m-surface) 0%, var(--m-surface-soft) 100%);
+  }
+
+  .mango-mcp-status-item:hover,
+  .mango-mcp-capability-item:hover,
+  .mango-mcp-prompt-panel:hover,
+  .mango-mcp-endpoint-box:hover,
+  .mango-mcp-api-key-box:hover {
+    border-color: var(--m-primary-border);
+    transform: translateY(-1px);
+  }
+
+  .mango-mcp-capability-icon {
+    padding: 5px;
+    border-radius: 6px;
+    background: var(--m-primary-soft);
+  }
+
+  .mango-mcp-prompt-text {
+    border: 1px solid var(--m-border);
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+
+    &:hover {
+      border-color: var(--m-primary-border);
+      background: var(--m-primary-soft);
+    }
+  }
+
+  .mango-mcp-action-row {
+    padding-top: 8px;
+    border-top: 1px solid var(--m-border);
+  }
+
+  @keyframes mango-mcp-pulse-ring {
+    0% {
+      box-shadow: 0 0 0 0 var(--m-primary-soft);
+    }
+
+    70% {
+      box-shadow: 0 0 0 6px transparent;
+    }
+
+    100% {
+      box-shadow: 0 0 0 0 transparent;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mango-mcp-pulse {
+      animation: none;
+    }
+
+    .mango-mcp-endpoint-box,
+    .mango-mcp-api-key-box,
+    .mango-mcp-status-item,
+    .mango-mcp-capability-item,
+    .mango-mcp-prompt-panel {
+      transition: none;
+
+      &:hover {
+        transform: none;
+      }
+    }
+  }
 </style>

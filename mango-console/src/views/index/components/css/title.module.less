@@ -1,23 +1,37 @@
 .title-container {
   display: flex;
-  justify-content: flex-start;
   align-items: center;
   position: relative;
-  padding: 10px;
+  justify-content: flex-start;
+  min-height: 28px;
+  padding: 0 0 10px;
+  gap: 8px;
 
   .title {
     color: var(--m-text);
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 22px;
+    letter-spacing: 0;
     vertical-align: middle;
-    background-color: transparent; /* 确保背景透明 */
+    background-color: transparent;
   }
 
   .line {
     display: inline-block;
+    flex: 0 0 auto;
+    width: 4px;
+    height: 18px;
+    border-radius: 4px;
     background-color: var(--m-primary);
-    margin-right: 10px;
-    width: 3px;
-    height: 16px;
+    box-shadow: 0 0 0 3px var(--m-primary-soft);
+  }
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    min-width: 24px;
+    background: linear-gradient(90deg, var(--m-border), transparent);
   }
 }

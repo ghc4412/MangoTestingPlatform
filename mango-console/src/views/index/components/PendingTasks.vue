@@ -158,4 +158,52 @@
     font-size: 12px;
     font-weight: 600;
   }
+  .pending-table-wrap {
+    padding-top: 0;
+    border: 1px solid var(--m-border);
+    border-radius: 8px;
+    background: var(--m-surface);
+    overflow: hidden;
+  }
+
+  .pending-tasks-table {
+    :deep(.arco-table) {
+      border-radius: 8px;
+    }
+
+    :deep(.arco-table-container) {
+      border: none;
+    }
+
+    :deep(.arco-table-th) {
+      height: 36px;
+      border-bottom: 1px solid var(--m-border);
+      background: var(--m-surface-soft);
+      color: var(--m-muted);
+      font-weight: 600;
+    }
+
+    :deep(.arco-table-td) {
+      height: 40px;
+      border-bottom: 1px solid var(--m-border);
+      background: var(--m-surface);
+      transition: background-color 0.18s ease;
+    }
+
+    :deep(.arco-table-tr:hover .arco-table-td) {
+      background: var(--m-primary-soft);
+    }
+  }
+
+  .task-id {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    height: 22px;
+    border: 1px solid var(--m-primary-border);
+    border-radius: 6px;
+    background: var(--m-primary-soft);
+    line-height: 20px;
+  }
 </style>

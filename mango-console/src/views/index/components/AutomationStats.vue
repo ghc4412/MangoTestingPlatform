@@ -1,5 +1,6 @@
 <template>
   <div class="stats-container">
+    <a-spin :loading="loading" class="stats-spin">
     <!-- UI自动化统计 -->
     <div class="stats-category">
       <div class="category-title">UI自动化</div>
@@ -132,6 +133,7 @@
         </a-grid-item>
       </a-grid>
     </div>
+    </a-spin>
   </div>
 </template>
 
@@ -166,9 +168,11 @@
     templateCount: 0,
     executionCount: 0,
   })
+  const loading = ref(false)
 
   // 获取统计数据
   const fetchStatistics = async () => {
+    loading.value = true
     try {
       const res = await getSystemIndexStatistics()
       uiStats.value = res.data.uiStats
@@ -177,6 +181,8 @@
       dataFactoryStats.value = res.data.dataFactoryStats || dataFactoryStats.value
     } catch (error) {
       console.log(error)
+    } finally {
+      loading.value = false
     }
   }
 
@@ -250,6 +256,90 @@
     &:hover {
       background-color: var(--m-primary-soft);
       transform: translateY(-1px);
+    }
+  }
+  .stats-spin,
+  :deep(.stats-spin .arco-spin-children) {
+    display: block;
+    min-height: 0;
+  }
+
+  .stats-container {
+    padding: 8px;
+    margin-top: 8px;
+    max-height: 100%;
+    background:
+      linear-gradient(180deg, var(--m-surface) 0%, var(--m-surface-soft) 100%);
+    border: 1px solid var(--m-border);
+  }
+
+  .stats-category {
+    padding: 9px;
+    margin-top: 8px;
+    border-radius: 8px;
+    background: var(--m-surface);
+    transition: border-color 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      border-color: var(--m-primary-border);
+      transform: translateY(-1px);
+    }
+
+    .category-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      font-size: 12px;
+      line-height: 18px;
+
+      &::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--m-primary);
+        box-shadow: 0 0 0 3px var(--m-primary-soft);
+      }
+    }
+  }
+
+  :deep(.arco-grid-item) {
+    padding: 7px;
+    border: 1px solid var(--m-border);
+    border-radius: 6px;
+    background: var(--m-surface-soft);
+    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      border-color: var(--m-primary-border);
+      background-color: var(--m-primary-soft);
+      transform: translateY(-1px);
+    }
+  }
+
+  :deep(.arco-statistic) {
+    .arco-statistic-title {
+      margin-bottom: 4px;
+      font-size: 11px;
+      line-height: 16px;
+    }
+
+    .arco-statistic-content {
+      font-size: 16px;
+      line-height: 20px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stats-category,
+    :deep(.arco-grid-item) {
+      transition: none;
+
+      &:hover {
+        transform: none;
+      }
     }
   }
 </style>

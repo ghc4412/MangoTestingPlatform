@@ -14,8 +14,8 @@ IS_SQLITE = False  # 是否选用sqlite作为数据源，默认使用mysql
 MYSQL_PORT = 3306
 MYSQL_DB_NAME = 'dev_mango_server'
 MYSQL_USER = 'root'
-MYSQL_PASSWORD = 'mP123456&'
-MYSQL_IP = '172.30.32.217'
+MYSQL_PASSWORD = 'admin'
+MYSQL_IP = '127.0.0.1'
 
 # ************************ DEBUG配置 ************************ #
 # 控制django是否debug
@@ -28,11 +28,11 @@ REDIS = False
 # ************************ Minio配置 ************************ #
 IS_MINIO = False
 if IS_MINIO:
-    MINIO_STORAGE_ENDPOINT = '192.168.1.100:9000'
-    MINIO_STORAGE_ACCESS_KEY = 'R3SrN5q9XGWj1n28wpG9'  # ACCESS_KEY
-    MINIO_STORAGE_SECRET_KEY = 'LliOFBMjp19jFTUw3byUGxgaj6GnmUdsEpRyFjw4'  # SECRET_KEY
+    MINIO_STORAGE_ENDPOINT = '312404.xyz:9000'
+    MINIO_STORAGE_ACCESS_KEY = 'minioadmin'  # ACCESS_KEY
+    MINIO_STORAGE_SECRET_KEY = 'Ghc312404@'  # SECRET_KEY
     MINIO_STORAGE_USE_HTTPS = False  # 如果使用 HTTPS，设置为 True
-    MINIO_STORAGE_MEDIA_BUCKET_NAME = 'mango-file'  # 桶名称
+    MINIO_STORAGE_MEDIA_BUCKET_NAME = 'mango-dev'  # 桶名称
     MINIO_STORAGE_AUTO_CREATE_MEDIA_BUCKET = True  # 桶不存在时自动创建
 
 # ************************ 是否允许删除 ************************ #

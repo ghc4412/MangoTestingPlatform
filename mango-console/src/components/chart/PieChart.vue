@@ -336,4 +336,54 @@
       line-height: 16px;
     }
   }
+  .mango-chart-content {
+    gap: 12px;
+    padding-top: 2px;
+  }
+
+  .mango-donut-total {
+    width: 82px;
+    height: 82px;
+    border: 1px solid var(--m-border);
+    border-radius: 50%;
+    background: var(--m-surface);
+    box-shadow: var(--m-shadow);
+  }
+
+  .mango-legend-list {
+    gap: 8px;
+  }
+
+  .mango-legend-item {
+    padding: 7px 8px;
+    border: 1px solid var(--m-border);
+    border-radius: 8px;
+    background: var(--m-surface-soft);
+    transition: border-color 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      border-color: var(--m-primary-border);
+      transform: translateY(-1px);
+    }
+  }
+
+  .mango-legend-dot {
+    box-shadow: 0 0 0 3px var(--m-surface);
+  }
+
+  @media (max-width: 760px) {
+    .mango-chart-content {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mango-legend-item {
+      transition: none;
+
+      &:hover {
+        transform: none;
+      }
+    }
+  }
 </style>
