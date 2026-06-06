@@ -9,6 +9,7 @@ from pathlib import Path
 import sys
 
 from src.common.enums.tools_enum import SystemEnvEnum
+from src.settings.env import load_project_env
 
 
 def set_env():
@@ -24,6 +25,8 @@ VERSION = '6.2.0'
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # **********************************************************************************************************************
 DJANGO_ENV = os.getenv('DJANGO_ENV', 'master')
+load_project_env(BASE_DIR, DJANGO_ENV)
+DJANGO_ENV = os.getenv('DJANGO_ENV', DJANGO_ENV)
 # 只在主进程（实际运行服务器的进程）中打印，避免Django自动重载导致的重复打印
 # RUN_MAIN 是 Django runserver 自动重载器设置的，只有在实际运行服务器的子进程中才会是 'true'
 # 如果使用其他方式启动（如 uvicorn），RUN_MAIN 可能不存在，此时也打印一次
@@ -85,7 +88,7 @@ TIME_ZONE = 'Asia/Shanghai'
 ALLOWED_HOSTS = ["*"]
 # **********************************************************************************************************************
 
-SECRET_KEY = f'django-insecure-)7248+$v^i-e@u$=+jzwl1u(vvw0d$n5mepritgniru(&8gmu1{VERSION}'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', f'django-insecure-local-{VERSION}')
 # **********************************************************************************************************************
 
 INSTALLED_APPS = [

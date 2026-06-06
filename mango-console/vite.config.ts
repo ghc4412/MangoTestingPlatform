@@ -8,8 +8,10 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 // import Components from 'unplugin-vue-components/vite'
 // import { ArcoResolver } from 'unplugin-vue-components/resolvers'
 export default defineConfig(({ mode }) => {
-  const dotenvConfig = dotenv.config({ path: `./.env.${mode}` })
-  const dotenvObj = dotenvConfig.parsed
+  const modeEnv = dotenv.config({ path: `./.env.${mode}` }).parsed || {}
+  const projectEnvFile = mode === 'dev' ? '../.env.local' : '../.env.docker'
+  const projectEnv = dotenv.config({ path: projectEnvFile }).parsed || {}
+  const dotenvObj = { ...modeEnv, ...projectEnv, ...process.env }
   return {
     base: dotenvObj?.BUILD_PATH || '/',
     build: {

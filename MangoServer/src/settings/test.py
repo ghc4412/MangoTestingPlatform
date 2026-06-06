@@ -1,42 +1,45 @@
-# -*- coding: utf-8 -*-
-# @Project: 芒果测试平台
-# @Description:
-# @Time   : 2024-07-12 14:13
-# @Author : 毛鹏
-# ************************ 数据源类型 ************************ #
+from .env import env, env_bool, env_int
 
-IS_SQLITE = False  # 是否选用sqlite作为数据源，默认使用mysql
+# ************************ Data source ************************ #
 
-# ************************ Mysql配置 ************************ #
+IS_SQLITE = env_bool('IS_SQLITE', False)
 
-MYSQL_DB_NAME = 'test_mango_server'
-MYSQL_USER = 'root'
-MYSQL_PASSWORD = 'mP123456&'
-MYSQL_IP = 'db'
-MYSQL_PORT = 3306
+# ************************ MySQL ************************ #
 
-# ************************ DEBUG配置 ************************ #
-# 控制django是否debug
-DEBUG = False
-# 控制日志是否输出debug
-IS_DEBUG_LOG = False
+MYSQL_DB_NAME = env('MYSQL_DB_NAME', 'test_mango_server', aliases=('MYSQL_DATABASE',))
+MYSQL_USER = env('MYSQL_USER', 'root')
+MYSQL_PASSWORD = env('MYSQL_PASSWORD', '')
+MYSQL_IP = env('MYSQL_IP', 'db')
+MYSQL_PORT = env_int('MYSQL_PORT', 3306)
 
-# ************************ REDIS配置 ************************ #
+# ************************ Debug ************************ #
 
-REDIS = False
-# ************************ Minio配置 ************************ #
-IS_MINIO = True
+DEBUG = env_bool('DJANGO_DEBUG', False)
+IS_DEBUG_LOG = env_bool('DJANGO_DEBUG_LOG', False)
 
-if IS_MINIO:
-    MINIO_STORAGE_ENDPOINT = 'minio:9000'  # 访问IP+端口
-    MINIO_STORAGE_USE_HTTPS = False  # 如果使用 HTTPS，设置为 True
-    MINIO_STORAGE_MEDIA_BUCKET_NAME = 'mango-file'  # 桶名称
-    MINIO_STORAGE_AUTO_CREATE_MEDIA_BUCKET = True  # 桶不存在时自动创建
-    MINIO_STORAGE_ACCESS_KEY = 'DS2hi1L4MG3EABBl6Q8S'  # ACCESS_KEY
-    MINIO_STORAGE_SECRET_KEY = 'VhHkFbk8Vg1hDzeKlXYCWpCHx6063gMCqrBdeBim'  # SECRET_KEY
-    # MINIO_STORAGE_ACCESS_KEY = 'eQUpBpIGUgHc1f2nZbte'  # 家里的
-    # MINIO_STORAGE_SECRET_KEY = 'AqNnxHTrxVAZtPUgu6lLEArekqjHfMtku4tM1qgz'  # 家里的
-# ************************ 是否允许删除 ************************ #
-IS_DELETE = True
-# *************** 是否发送error日志协助芒果修复问题 *************** #
-IS_SEND_MAIL = True
+# ************************ Redis ************************ #
+
+REDIS = env_bool('REDIS', False)
+
+# ************************ MinIO ************************ #
+
+IS_MINIO = env_bool('IS_MINIO', True)
+MINIO_STORAGE_ENDPOINT = env('MINIO_STORAGE_ENDPOINT', 'minio:9000', aliases=('MINIO_ENDPOINT',))
+MINIO_STORAGE_ACCESS_KEY = env(
+    'MINIO_STORAGE_ACCESS_KEY',
+    '',
+    aliases=('MINIO_ACCESS_KEY', 'MINIO_ROOT_USER'),
+)
+MINIO_STORAGE_SECRET_KEY = env(
+    'MINIO_STORAGE_SECRET_KEY',
+    '',
+    aliases=('MINIO_SECRET_KEY', 'MINIO_ROOT_PASSWORD'),
+)
+MINIO_STORAGE_USE_HTTPS = env_bool('MINIO_STORAGE_USE_HTTPS', False, aliases=('MINIO_USE_HTTPS',))
+MINIO_STORAGE_MEDIA_BUCKET_NAME = env('MINIO_STORAGE_MEDIA_BUCKET_NAME', 'mango-file', aliases=('MINIO_BUCKET',))
+MINIO_STORAGE_AUTO_CREATE_MEDIA_BUCKET = env_bool('MINIO_STORAGE_AUTO_CREATE_MEDIA_BUCKET', True)
+
+# ************************ Runtime switches ************************ #
+
+IS_DELETE = env_bool('IS_DELETE', True)
+IS_SEND_MAIL = env_bool('IS_SEND_MAIL', True)

@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.local.example
+!.env.docker.example
+
+mango-console/.env
+mango-console/.env.*
+
+MangoServer/src/settings/database.json
+MangoServer/venv/
+.venv/
+venv/
+
+.idea/
+.codemoss/

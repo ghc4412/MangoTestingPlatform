@@ -3,7 +3,14 @@ set -eu
 
 cd "$(dirname "$0")"
 
-COMPOSE="docker compose"
+ENV_FILE="${COMPOSE_ENV_FILE:-.env.docker}"
+if [ ! -f "$ENV_FILE" ]; then
+  echo "Missing $ENV_FILE. Copy .env.docker.example to $ENV_FILE and fill local deployment values first."
+  exit 1
+fi
+
+export MANGO_ENV_FILE="$ENV_FILE"
+COMPOSE="docker compose --env-file $ENV_FILE"
 
 echo "拉取最新代码..."
 BEFORE_REV="$(git rev-parse HEAD)"

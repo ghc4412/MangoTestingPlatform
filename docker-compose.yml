@@ -1,17 +1,13 @@
 x-mango-server-common: &mango-server-common
-  image: mango-server:${DJANGO_ENV}
+  image: mango-server:${DJANGO_ENV:-master}
   restart: unless-stopped
+  env_file:
+    - ${MANGO_ENV_FILE:-.env.docker}
   volumes:
     - /etc/localtime:/etc/localtime:ro
   environment:
     DJANGO_SETTINGS_MODULE: src.settings
-    DJANGO_ENV: ${DJANGO_ENV}
-    MINIO_STORAGE_ENDPOINT: minio:9000
-    MINIO_STORAGE_ACCESS_KEY: ${MINIO_ROOT_USER}
-    MINIO_STORAGE_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
-    MINIO_STORAGE_USE_HTTPS: "false"
-    MINIO_STORAGE_MEDIA_BUCKET_NAME: mango-file
-    MINIO_STORAGE_AUTO_CREATE_MEDIA_BUCKET: "true"
+    DJANGO_ENV: ${DJANGO_ENV:-master}
   networks:
     - app_network
 
@@ -19,19 +15,16 @@ services:
   db:
     image: mysql:8.0.40-debian
     restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    env_file:
+      - ${MANGO_ENV_FILE:-.env.docker}
     ports:
-      - "${MYSQL_PORT}:3306"
+      - "${MYSQL_PORT:-3306}:3306"
     volumes:
       - /mango_data/mysql:/var/lib/mysql
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD}"]
       interval: 5s
       timeout: 10s
       retries: 5
@@ -42,12 +35,11 @@ services:
   minio:
     image: minio/minio:RELEASE.2024-12-18T13-15-44Z.fips
     restart: unless-stopped
+    env_file:
+      - ${MANGO_ENV_FILE:-.env.docker}
     ports:
-      - "${MINIO_API_PORT}:9000"
-      - "${MINIO_CONSOLE_PORT}:9001"
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      - "${MINIO_API_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
     volumes:
       - /mango_data/minio:/data
       - /etc/localtime:/etc/localtime:ro
@@ -67,7 +59,7 @@ services:
       context: ./MangoServer
       dockerfile: Dockerfile
       args:
-        DJANGO_ENV: ${DJANGO_ENV}
+        DJANGO_ENV: ${DJANGO_ENV:-master}
     expose:
       - "8000"
     depends_on:
@@ -82,35 +74,35 @@ services:
 
   scheduler_service:
     <<: *mango-server-common
-    command: python manage.py run_scheduler --env=${DJANGO_ENV} --node-name=scheduler-1
+    command: python manage.py run_scheduler --env=${DJANGO_ENV:-master} --node-name=scheduler-1
     depends_on:
       mango_server:
         condition: service_started
 
   task_dispatcher:
     <<: *mango-server-common
-    command: python manage.py run_dispatcher --env=${DJANGO_ENV} --node-name=dispatcher-1
+    command: python manage.py run_dispatcher --env=${DJANGO_ENV:-master} --node-name=dispatcher-1
     depends_on:
       mango_server:
         condition: service_started
 
   api_worker_1:
     <<: *mango-server-common
-    command: python manage.py run_api_worker --env=${DJANGO_ENV} --worker-name=api-worker-1 --concurrency=5 --db-idle-seconds=1800
+    command: python manage.py run_api_worker --env=${DJANGO_ENV:-master} --worker-name=api-worker-1 --concurrency=5 --db-idle-seconds=1800
     depends_on:
       mango_server:
         condition: service_started
 
   api_worker_2:
     <<: *mango-server-common
-    command: python manage.py run_api_worker --env=${DJANGO_ENV} --worker-name=api-worker-2 --concurrency=5 --db-idle-seconds=1800
+    command: python manage.py run_api_worker --env=${DJANGO_ENV:-master} --worker-name=api-worker-2 --concurrency=5 --db-idle-seconds=1800
     depends_on:
       mango_server:
         condition: service_started
 
   mcp_service:
     <<: *mango-server-common
-    command: python manage.py run_mcp_service --env=${DJANGO_ENV} --host=0.0.0.0 --port=8010
+    command: python manage.py run_mcp_service --env=${DJANGO_ENV:-master} --host=0.0.0.0 --port=8010
     expose:
       - "8010"
     depends_on:
@@ -142,8 +134,16 @@ services:
       context: ./mango-console
       dockerfile: Dockerfile
       args:
-        VUE_ENV: ${VUE_ENV}
+        VUE_ENV: ${VUE_ENV:-master}
+        VITE_APP_ENV: ${VITE_APP_ENV:-master}
+        VITE_APP_BASE_URL: ${VITE_APP_BASE_URL:-/api}
+        VITE_APP_SOCKET_URL: ${VITE_APP_SOCKET_URL:-/api/web/socket?}
+        VITE_APP_MINIO_URL: ${VITE_APP_MINIO_URL:-/minio}
+        VITE_APP_MCP_SERVER_NAME: ${VITE_APP_MCP_SERVER_NAME:-mango-test-platform}
+        VITE_IS_INDEX_WINDOW: ${VITE_IS_INDEX_WINDOW:-false}
     restart: unless-stopped
+    env_file:
+      - ${MANGO_ENV_FILE:-.env.docker}
     expose:
       - "80"
     volumes:
@@ -155,7 +155,7 @@ services:
       context: ./MangoActuator
       dockerfile: Dockerfile
       args:
-        EXECUTOR_TYPE: ${EXECUTOR_TYPE}
+        EXECUTOR_TYPE: ${EXECUTOR_TYPE:-linux}
     restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
