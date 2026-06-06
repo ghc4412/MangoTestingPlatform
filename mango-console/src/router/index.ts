@@ -128,6 +128,22 @@ export const extraRoutes = [
           breadcrumb: [{ title: '定时任务', path: '/timing/tasks' }],
         },
       },
+      {
+        path: 'fire-record/index',
+        component: () => import('@/views/timing/fire-record/index.vue'),
+        meta: {
+          title: '触发记录',
+          breadcrumb: [{ title: '定时任务', path: '/timing/tasks/index' }],
+        },
+      },
+      {
+        path: 'system-jobs/index',
+        component: () => import('@/views/timing/system-jobs/index.vue'),
+        meta: {
+          title: '系统任务',
+          breadcrumb: [{ title: '定时任务', path: '/timing/tasks/index' }],
+        },
+      },
     ],
   },
 
@@ -148,6 +164,14 @@ export const extraRoutes = [
         },
       },
       {
+        path: 'product/datasource',
+        component: () => import('@/views/config/product/datasource/index.vue'),
+        meta: {
+          title: '产品逻辑数据源',
+          breadcrumb: [{ title: '项目产品', path: '/config/product' }],
+        },
+      },
+      {
         path: 'project/notice',
         component: () => import('@/views/config/project/notice/index.vue'),
         meta: {
@@ -159,7 +183,7 @@ export const extraRoutes = [
         path: 'test/object/database',
         component: () => import('@/views/config/test-object/database/index.vue'),
         meta: {
-          title: '数据库配置',
+          title: '数据源配置',
           breadcrumb: [{ title: '测试对象', path: '/config/test/object' }],
         },
       },

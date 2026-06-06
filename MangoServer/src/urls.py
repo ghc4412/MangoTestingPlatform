@@ -16,30 +16,35 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
-from rest_framework.documentation import include_docs_urls
 
-from src.auto_test.auto_user.views.user import LoginViews
+from src.apps.auto_user.views.user import LoginViews
 from src.settings import IS_MINIO
 
 urlpatterns = [
-    path('docs', include_docs_urls(title='src', authentication_classes=[])),
-    #
-    path("login", LoginViews.as_view({'post': 'login'})),  # 登录
-    path("register", LoginViews.as_view({'post': 'register'})),  # 登录
-    path("menu", LoginViews.as_view({'post': 'menu'})),
-    path("test", LoginViews.as_view({'get': 'test'})),
-    path("download", LoginViews.as_view({'get': 'get_download'})),
-    #
-    path('system/', include("src.auto_test.auto_system.urls")),
-    path('data-factory/', include("src.auto_test.auto_data_factory.urls")),
-    path('api/', include("src.auto_test.auto_api.urls")),
-    path('ui/', include("src.auto_test.auto_ui.urls")),
-    path('perf/', include("src.auto_test.auto_perf.urls")),
-    path('user/', include("src.auto_test.auto_user.urls")),
-    path('pytest/', include("src.auto_test.auto_pytest.urls")),
-    path('monitoring/', include("src.auto_test.monitoring.urls")),
+    path("api/login", LoginViews.as_view({'post': 'login'})),
+    path("api/register", LoginViews.as_view({'post': 'register'})),
+    path("api/menu", LoginViews.as_view({'post': 'menu'})),
+    path("api/test", LoginViews.as_view({'get': 'test'})),
+    path("api/download", LoginViews.as_view({'get': 'get_download'})),
+    path('api/system/', include("src.apps.auto_system.urls")),
+    path('api/data-factory/', include("src.apps.auto_data_factory.urls")),
+    path('api/api/', include("src.apps.auto_api.urls")),
+    path('api/ui/', include("src.apps.auto_ui.urls")),
+    path('api/perf/', include("src.apps.auto_perf.urls")),
+    path('api/user/', include("src.apps.auto_user.urls")),
+    path('api/pytest/', include("src.apps.auto_pytest.urls")),
+    path('api/monitoring/', include("src.apps.monitoring.urls")),
 ]
+
+try:
+    import coreapi  # noqa: F401
+    import coreschema  # noqa: F401
+except ImportError:
+    pass
+else:
+    from rest_framework.documentation import include_docs_urls
+
+    urlpatterns.insert(0, path('api/docs', include_docs_urls(title='src', authentication_classes=[])))
 
 if not IS_MINIO:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-

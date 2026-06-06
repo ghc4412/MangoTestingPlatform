@@ -181,17 +181,24 @@
     { key: 'file', title: '文件上传', desc: '上传并生成 get_file 引用', icon: IconFile },
   ]
 
+  const mcpServerName =
+    String(import.meta.env.VITE_APP_MCP_SERVER_NAME || '').trim() || 'mango-test-platform'
   const prompts = [
-    '使用 mango-test-platform MCP 查询当前平台开放了哪些能力。',
-    '使用 mango-test-platform MCP 创建一个 API case，执行后分析失败原因。',
-    '使用 mango-test-platform MCP 分析 test_suite_id=662993174721 的失败 API 用例。',
-    '使用 mango-test-platform MCP 为指定表创建数据工厂实体和状态模板。',
+    `使用 ${mcpServerName} MCP 查询当前平台开放了哪些能力。`,
+    `使用 ${mcpServerName} MCP 创建一个 API case，执行后分析失败原因。`,
+    `使用 ${mcpServerName} MCP 分析 test_suite_id=662993174721 的失败 API 用例。`,
+    `使用 ${mcpServerName} MCP 为指定表创建数据工厂实体和状态模板。`,
   ]
   const promptIndex = ref(Math.floor(Math.random() * prompts.length))
 
   const docsUrl =
     'http://43.142.161.61:8002/pages/MCP%E6%9C%8D%E5%8A%A1/%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97.html'
-  const backendBaseUrl = computed(() => (baseURL || window.location.origin).replace(/\/+$/, ''))
+  const backendBaseUrl = computed(() => {
+    if (!baseURL || baseURL.startsWith('/')) {
+      return window.location.origin.replace(/\/+$/, '')
+    }
+    return baseURL.replace(/\/+$/, '')
+  })
   const mcpUrl = computed(() => `${backendBaseUrl.value}/mcp`)
   const modeText = computed(() => import.meta.env.MODE || '-')
   const activePrompt = computed(() => prompts[promptIndex.value])
@@ -206,7 +213,7 @@
   const installPrompt = computed(
     () => `请根据下面的配置帮我安装 Mango MCP 服务，并在安装后查询这个 MCP 服务开放了哪些能力。
 
-MCP 服务名称：mango-test-platform
+MCP 服务名称：${mcpServerName}
 URL：${mcpUrl.value}
 Headers：
 Authorization: ${authHeader.value}
@@ -218,7 +225,7 @@ Authorization: ${authHeader.value}
 4. 后续创建、执行、上传等操作都使用这个 Authorization 对应的 Mango 用户权限。`
   )
   const codexConfig = computed(
-    () => `[mcp_servers.mango-test-platform]
+    () => `[mcp_servers.${mcpServerName}]
 url = "${mcpUrl.value}"
 env_http_headers = { Authorization = "MANGO_TEST_PLATFORM_AUTH_HEADER" }
 
@@ -544,86 +551,93 @@ MANGO_TEST_PLATFORM_AUTH_HEADER=${authHeader.value}`
     font-size: 12px;
     line-height: 20px;
   }
-  .mango-mcp-head {
-    padding: 2px 0 4px;
-  }
 
-  .mango-mcp-pulse {
-    animation: mango-mcp-pulse-ring 2.4s ease-out infinite;
-  }
-
-  .mango-mcp-endpoint-box,
-  .mango-mcp-api-key-box,
-  .mango-mcp-status-item,
-  .mango-mcp-capability-item,
-  .mango-mcp-prompt-panel {
-    transition: border-color 0.22s ease, background-color 0.22s ease, transform 0.22s ease;
-  }
-
-  .mango-mcp-endpoint-box,
-  .mango-mcp-api-key-box {
-    background: linear-gradient(180deg, var(--m-surface) 0%, var(--m-surface-soft) 100%);
-  }
-
-  .mango-mcp-status-item:hover,
-  .mango-mcp-capability-item:hover,
-  .mango-mcp-prompt-panel:hover,
-  .mango-mcp-endpoint-box:hover,
-  .mango-mcp-api-key-box:hover {
-    border-color: var(--m-primary-border);
-    transform: translateY(-1px);
-  }
-
-  .mango-mcp-capability-icon {
-    padding: 5px;
-    border-radius: 6px;
-    background: var(--m-primary-soft);
-  }
-
-  .mango-mcp-prompt-text {
-    border: 1px solid var(--m-border);
-    transition: border-color 0.2s ease, background-color 0.2s ease;
-
-    &:hover {
-      border-color: var(--m-primary-border);
-      background: var(--m-primary-soft);
-    }
-  }
-
-  .mango-mcp-action-row {
-    padding-top: 8px;
-    border-top: 1px solid var(--m-border);
-  }
-
-  @keyframes mango-mcp-pulse-ring {
-    0% {
-      box-shadow: 0 0 0 0 var(--m-primary-soft);
+  @media (max-width: 1440px), (max-height: 820px) {
+    .mango-mcp-workbench,
+    .mango-mcp-scroll-area {
+      gap: 6px;
     }
 
-    70% {
-      box-shadow: 0 0 0 6px transparent;
+    .mango-mcp-workbench {
+      padding-top: 4px;
+      padding-bottom: 3px;
     }
 
-    100% {
-      box-shadow: 0 0 0 0 transparent;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .mango-mcp-pulse {
-      animation: none;
+    .mango-mcp-head p {
+      margin-top: 2px;
+      line-height: 16px;
     }
 
     .mango-mcp-endpoint-box,
-    .mango-mcp-api-key-box,
-    .mango-mcp-status-item,
-    .mango-mcp-capability-item,
-    .mango-mcp-prompt-panel {
-      transition: none;
+    .mango-mcp-api-key-box {
+      padding: 7px 8px;
+    }
 
-      &:hover {
-        transform: none;
-      }
+    .mango-mcp-status-grid,
+    .mango-mcp-capability-grid,
+    .mango-mcp-action-row {
+      gap: 6px;
+    }
+
+    .mango-mcp-status-item {
+      padding: 6px;
+    }
+
+    .mango-mcp-capability-item {
+      gap: 6px;
+      padding: 6px;
+    }
+
+    .mango-mcp-prompt-panel {
+      min-height: 76px;
+      padding: 7px;
+    }
+
+    .mango-mcp-prompt-text {
+      min-height: 38px;
+      padding: 6px 7px;
+      line-height: 16px;
+    }
+  }
+
+  @media (max-width: 1280px), (max-height: 760px) {
+    .mango-mcp-head {
+      align-items: center;
+    }
+
+    .mango-mcp-head p,
+    .mango-mcp-capability-item span {
+      display: none;
+    }
+
+    .mango-mcp-status-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .mango-mcp-status-item:last-child {
+      grid-column: 1 / -1;
+    }
+
+    .mango-mcp-capability-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .mango-mcp-capability-item {
+      justify-content: center;
+      text-align: center;
+    }
+
+    .mango-mcp-capability-item strong {
+      font-size: 11px;
+    }
+
+    .mango-mcp-capability-icon {
+      font-size: 15px;
+    }
+
+    .mango-mcp-action-row {
+      grid-template-columns: 1fr;
+      padding-top: 2px;
     }
   }
 </style>

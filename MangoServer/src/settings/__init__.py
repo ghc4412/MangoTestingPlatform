@@ -4,18 +4,23 @@
 # @Time   : 2024-07-12 14:15
 # @Author : 毛鹏
 import os
-import sys
 from pathlib import Path
 
-from ..enums.tools_enum import SystemEnvEnum
+import sys
+
+from src.common.enums.tools_enum import SystemEnvEnum
+
+
 def set_env():
     for i, arg in enumerate(sys.argv):
         if '--env=' in arg:
             os.environ['DJANGO_ENV'] = arg.split('=')[1]
             del sys.argv[i]
             break
+
+
 set_env()
-VERSION = '6.1.2'
+VERSION = '6.2.0'
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # **********************************************************************************************************************
 DJANGO_ENV = os.getenv('DJANGO_ENV', 'master')
@@ -44,22 +49,32 @@ else:
 
 # 监控基类（MonitorBase）在作为第三方库使用时，通过以下配置动态导入 Django 项目中的模型和类。
 # 目前在本项目中默认指向自身的实现路径；如果将来拆分为独立库，其他项目只需在自己的 settings 中配置相同名称即可。
-MONITORING_REPORT_MODEL = "src.auto_test.monitoring.models.MonitoringReport"
-MONITORING_TASK_MODEL = "src.auto_test.monitoring.models.MonitoringTask"
-MONITORING_LOG_STATUS_ENUM = "src.enums.monitoring_enum.MonitoringLogStatusEnum"
-MONITORING_NOTICE_MAIN = "src.auto_test.auto_system.service.notice.NoticeMain"
+MONITORING_REPORT_MODEL = "src.apps.monitoring.models.MonitoringReport"
+MONITORING_TASK_MODEL = "src.apps.monitoring.models.MonitoringTask"
+MONITORING_LOG_STATUS_ENUM = "src.common.enums.monitoring_enum.MonitoringLogStatusEnum"
+MONITORING_NOTICE_MAIN = "src.apps.auto_system.service.notice.NoticeMain"
 
 RETRY_FREQUENCY = 3
-API_MAX_TASKS = 10
 # **********************************************************************************************************************
 # **********************************************************************************************************************
+
+for log_dir in [
+    BASE_DIR / 'logs',
+    BASE_DIR / 'logs/auto_api',
+    BASE_DIR / 'logs/auto_ui',
+    BASE_DIR / 'logs/auto_system',
+    BASE_DIR / 'logs/auto_perf',
+    BASE_DIR / 'logs/auto_pytest',
+    BASE_DIR / 'logs/monitoring',
+]:
+    os.makedirs(log_dir, exist_ok=True)
 
 if not IS_MINIO:
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
     MEDIA_URL = '/mango-file/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'mango-file')
 else:
-    DEFAULT_FILE_STORAGE = 'src.tools.storage.MangoMinioMediaStorage'
+    DEFAULT_FILE_STORAGE = 'src.common.tools.storage.MangoMinioMediaStorage'
 
 # **********************************************************************************************************************
 
@@ -77,14 +92,15 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
 
-    'src.auto_test.auto_ui',
-    'src.auto_test.auto_api',
-    'src.auto_test.auto_system',
-    'src.auto_test.auto_data_factory',
-    'src.auto_test.auto_perf',
-    'src.auto_test.auto_user',
-    'src.auto_test.auto_pytest',
-    'src.auto_test.monitoring',
+    'src.apps.auto_ui',
+    'src.apps.auto_api',
+    'src.apps.auto_system',
+    'src.apps.auto_data_factory',
+    'src.apps.auto_perf',
+    'src.apps.auto_user',
+    'src.apps.auto_pytest',
+    'src.apps.monitoring',
+    'src.apps.task_center',
     'rest_framework',  # 前后端分离
     'corsheaders',  # 跨域
     'channels',  # 验证
@@ -102,10 +118,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.gzip.GZipMiddleware',  # 添加Gzip压缩支持
-    # 'src.middleware.log_collector.LogMiddleWare',
-    'src.middleware.user_logs.UserLogsMiddleWare',
-    # 'src.middleware.operation_log.OperationLogMiddleware',
-    'src.middleware.is_delete.IsDeleteMiddleWare',
+    # 'src.common.middleware.log_collector.LogMiddleWare',
+    'src.common.middleware.user_logs.UserLogsMiddleWare',
+    # 'src.common.middleware.operation_log.OperationLogMiddleware',
+    'src.common.middleware.is_delete.IsDeleteMiddleWare',
 ]
 # **********************************************************************************************************************
 
@@ -359,7 +375,7 @@ LOGGING = {
 # **********************************************************************************************************************
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': ['src.middleware.auth.JwtQueryParamsAuthentication', ],
+    'DEFAULT_AUTHENTICATION_CLASSES': ['src.common.middleware.auth.JwtQueryParamsAuthentication', ],
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
 # **********************************************************************************************************************

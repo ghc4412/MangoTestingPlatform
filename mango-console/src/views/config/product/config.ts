@@ -110,13 +110,13 @@ export const tableColumns = useTableColumn([
     title: '创建时间',
     key: 'create_time',
     dataIndex: 'create_time',
-    width: 170,
+    width: 180,
   },
   {
     title: '更新时间',
     key: 'update_time',
     dataIndex: 'update_time',
-    width: 170,
+    width: 180,
   },
   {
     title: '项目名称',
@@ -149,6 +149,6 @@ export const tableColumns = useTableColumn([
     key: 'actions',
     dataIndex: 'actions',
     fixed: 'right',
-    width: 170,
+    width: 220,
   },
 ])
