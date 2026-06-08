@@ -14,6 +14,7 @@ x-mango-server-common: &mango-server-common
 services:
   db:
     image: mysql:8.0.40-debian
+    container_name: mysql-db
     restart: unless-stopped
     env_file:
       - ${MANGO_ENV_FILE:-.env.docker}
