@@ -156,7 +156,7 @@ services:
       context: ./MangoActuator
       dockerfile: Dockerfile
       args:
-        EXECUTOR_TYPE: ${EXECUTOR_TYPE}
+        EXECUTOR_TYPE: ${EXECUTOR_TYPE:-web_ui}
     restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
